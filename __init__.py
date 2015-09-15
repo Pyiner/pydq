@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import six
 
-__title__ = 'requests'
+__title__ = 'pydq'
 __version__ = '0.0.1'
 __author__ = 'Pyiner'
 __license__ = 'Apache 2.0'
