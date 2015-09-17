@@ -50,9 +50,34 @@ class DataQuery(object):
                 return desc
         return 0
 
+    def cmp_to_key(self, mycmp):
+        class K(object):
+            def __init__(self, obj, *args):
+                self.obj = obj
+
+            def __lt__(self, other):
+                return mycmp(self.obj, other.obj) < 0
+
+            def __gt__(self, other):
+                return mycmp(self.obj, other.obj) > 0
+
+            def __eq__(self, other):
+                return mycmp(self.obj, other.obj) == 0
+
+            def __le__(self, other):
+                return mycmp(self.obj, other.obj) <= 0
+
+            def __ge__(self, other):
+                return mycmp(self.obj, other.obj) >= 0
+
+            def __ne__(self, other):
+                return mycmp(self.obj, other.obj) != 0
+
+        return K
+
     def order_by(self, *args):
         self.order_fields = args
-        d = sorted(self.data, cmp=self.cmp)
+        d = sorted(self.data, key=self.cmp_to_key(self.cmp))
         return self.__class__(data=d)
 
     def __iter__(self):
@@ -89,5 +114,5 @@ if __name__ == '__main__':
     }]
 
     dq = DataQuery(xdata)
-    for i in dq.order_by('a', '-b'):
+    for i in dq.order_by('a', 'b'):
         print i
