@@ -13,6 +13,7 @@ __all__ = ['DataQuery']
 class DataQuery(object):
     def __init__(self, data):
         self.data = data
+        self.order_fields = []
 
     @staticmethod
     def item_exist(item, **kwargs):
@@ -37,14 +38,25 @@ class DataQuery(object):
     def exclude(self, **kwargs):
         return self.query(False, **kwargs)
 
-    def order_by(self, field):
-        desc = field.startswith('-')
-        field = field.strip('-')
-        d = sorted(self.data, key=lambda x: x[field], reverse=desc)
+    def cmp(self, x, y):
+        for field in self.order_fields:
+            desc = -1 if field.startswith('-') else 1
+            field = field.strip('-')
+            if x[field] == y[field]:
+                continue
+            if x[field] < y[field]:
+                return -desc
+            else:
+                return desc
+        return 0
+
+    def order_by(self, *args):
+        self.order_fields = args
+        d = sorted(self.data, cmp=self.cmp)
         return self.__class__(data=d)
 
     def __iter__(self):
-        return self.data
+        return iter(self.data)
 
     def __getitem__(self, k):
         if not isinstance(k, (slice,) + six.integer_types):
@@ -70,8 +82,12 @@ if __name__ == '__main__':
         'a': 3,
         'b': 2,
         'c': 1
+    }, {
+        'a': 2,
+        'b': 2,
+        'c': 1
     }]
 
     dq = DataQuery(xdata)
-    for i in dq.filter(c=1):
+    for i in dq.order_by('a', '-b'):
         print i
