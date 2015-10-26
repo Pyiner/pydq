@@ -93,6 +93,9 @@ class DataQuery(object):
 
         return data[k]
 
+    def __len__(self):
+        return self.data.__len__()
+
 
 if __name__ == '__main__':
     xdata = [{
