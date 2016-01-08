@@ -2,12 +2,15 @@
 import six
 
 __title__ = 'pydq'
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 __author__ = 'Pyiner'
 __license__ = 'Apache 2.0'
 __copyright__ = 'Copyright 2015 Pyiner'
 
 __all__ = ['DataQuery']
+
+LOOKUP_SEP = '__'
+LOOKUPS = ['exact', 'lt', 'lte', 'gt', 'gte']
 
 
 class DataQuery(object):
@@ -15,12 +18,35 @@ class DataQuery(object):
         self.data = data
         self.order_fields = []
 
-    @staticmethod
-    def item_exist(item, **kwargs):
+    def field_check(self, item_value, lookup, value):
+        if lookup == 'exact':
+            return item_value == value
+        elif lookup == 'lt':
+            return item_value < value
+        elif lookup == 'lte':
+            return item_value <= value
+        elif lookup == 'gt':
+            return item_value > value
+        elif lookup == 'gte':
+            return item_value >= value
+        return False
+
+    def item_exist(self, item, **kwargs):
         exist = True
         for k, v in kwargs.items():
-            if k not in item or item[k] != v:
+            if k not in item:
                 exist = False
+
+            names = k.split(LOOKUP_SEP)
+            item_key = names[0]
+            if len(names) == 2 and names[1] in LOOKUPS:
+                lookup = names[1]
+            else:
+                lookup = 'exact'
+
+            exist = self.field_check(item[item_key], lookup, v)
+
+            if exist is False:
                 break
         return exist
 
@@ -34,6 +60,9 @@ class DataQuery(object):
 
     def filter(self, **kwargs):
         return self.query(True, **kwargs)
+
+    def between(self, ):
+        pass
 
     def exclude(self, **kwargs):
         return self.query(False, **kwargs)
@@ -117,5 +146,5 @@ if __name__ == '__main__':
     }]
 
     dq = DataQuery(xdata)
-    for i in dq.order_by('a', 'b'):
+    for i in dq.filter(a=2):
         print i
