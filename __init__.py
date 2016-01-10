@@ -2,7 +2,7 @@
 import six
 
 __title__ = 'pydq'
-__version__ = '0.0.2'
+__version__ = '0.0.1'
 __author__ = 'Pyiner'
 __license__ = 'Apache 2.0'
 __copyright__ = 'Copyright 2015 Pyiner'
@@ -35,7 +35,7 @@ class DataQuery(object):
         exist = True
         for k, v in kwargs.items():
             if k not in item:
-                exist = False
+                continue
 
             names = k.split(LOOKUP_SEP)
             item_key = names[0]
