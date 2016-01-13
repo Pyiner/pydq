@@ -34,11 +34,11 @@ class DataQuery(object):
     def item_exist(self, item, **kwargs):
         exist = True
         for k, v in kwargs.items():
-            if k not in item:
-                continue
-
             names = k.split(LOOKUP_SEP)
             item_key = names[0]
+
+            if item_key not in item:
+                continue
             if len(names) == 2 and names[1] in LOOKUPS:
                 lookup = names[1]
             else:
