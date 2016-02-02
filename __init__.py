@@ -10,7 +10,7 @@ __copyright__ = 'Copyright 2015 Pyiner'
 __all__ = ['DataQuery']
 
 LOOKUP_SEP = '__'
-LOOKUPS = ['exact', 'lt', 'lte', 'gt', 'gte']
+LOOKUPS = ['exact', 'lt', 'lte', 'gt', 'gte','startswith']
 
 
 class DataQuery(object):
@@ -29,6 +29,8 @@ class DataQuery(object):
             return item_value > value
         elif lookup == 'gte':
             return item_value >= value
+        elif lookup == 'startswith':
+            return item_value.startswith(value)
         return False
 
     def item_exist(self, item, **kwargs):
@@ -130,21 +132,21 @@ if __name__ == '__main__':
     xdata = [{
         'a': 1,
         'b': 2,
-        'c': 3
+        'c': '3'
     }, {
         'a': 2,
         'b': 1,
-        'c': 3
+        'c': '3'
     }, {
         'a': 3,
         'b': 2,
-        'c': 1
+        'c': '1'
     }, {
         'a': 2,
         'b': 2,
-        'c': 1
+        'c': '1',
     }]
 
     dq = DataQuery(xdata)
-    for i in dq.filter(a=2):
+    for i in dq.filter(c__startswith='1'):
         print i
